@@ -27,7 +27,7 @@ const importData = async () => {
     const adminUser = createdUsers[0]._id; // we defined the first user in users.js as admins
 
     const sampleProducts = products.map((product) => {
-      return { ...products, user: adminUser }; // return products but add our admin to it
+      return { ...product, user: adminUser }; // return products but add our admin to it, obv we can have more admins and prods added by them, but here just some seeder data is being used
     });
 
     await Product.insertMany(sampleProducts);
@@ -54,6 +54,7 @@ const destroyData = async () => {
 };
 
 // to call this seeder -> node backend/seeder or node backend/seeder -d
+// also just use this script in the beginning as if other types of data is also associated in the full project then these methods will remove them also.
 if (process.argv[2] === '-d') {
   destroyData();
 } else {
