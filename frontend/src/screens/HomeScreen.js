@@ -1,32 +1,39 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Col, Row } from 'react-bootstrap';
 import Product from '../components/Product';
-import axios from 'axios';
+import Message from '../components/Message';
+import Loader from '../components/Loader';
+import { listProducts } from '../actions/productActions.js';
 
 const HomeScreen = () => {
-  const [products, setProducts] = useState([]);
+  const dispatch = useDispatch(); // useDispatch is used to connect to the reducer.
+
+  const productList = useSelector((state) => state.productList); // to get something from the state.
+  const { loading, error, products } = productList;
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      const { data } = await axios.get('/api/products');
-      setProducts(data);
-    };
-
-    fetchProducts();
-  }, []);
+    dispatch(listProducts()); // here listProducts is the action creator function and thunk helps in passing a function rather than only action.
+  }, [dispatch]);
 
   return (
     <>
       <h1>Latest Products</h1>
-      <Row>
-        {products.map((product) => {
-          return (
-            <Col key={product._id} sm={12} md={6} lg={4} xl={3}>
-              <Product product={product} />
-            </Col>
-          );
-        })}
-      </Row>
+      {loading ? (
+        <Loader> Loading ... </Loader>
+      ) : error ? (
+        <Message variant="danger">{error} </Message>
+      ) : (
+        <Row>
+          {products.map((product) => {
+            return (
+              <Col key={product._id} sm={12} md={6} lg={4} xl={3}>
+                <Product product={product} />
+              </Col>
+            );
+          })}
+        </Row>
+      )}
     </>
   );
 };

@@ -11,6 +11,7 @@ router.get(
   '/',
   asyncHandler(async (req, res) => {
     // Normally all the mongoose op will require try catch so for that we are using asyncHandler.
+    // Here always consider that a try{} catch(err){} block is there to catch errors, if any
     const products = await Product.find({});
     res.json(products);
   })
@@ -26,7 +27,9 @@ router.get(
     if (product) {
       res.json(product);
     } else {
-      res.status(404).json({ message: 'Product not found' }); //wont work here
+      // res.status(404).json({ message: 'Product not found' }); earlier this was used to just send error as json
+      res.status(404);
+      throw new Error('Product not found'); // now our errorHandler will be used.
     }
   })
 );
